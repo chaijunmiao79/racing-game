@@ -736,14 +736,23 @@ function closeLeaderboard(){
 function resetPlayerName(){
     const oldName=getPlayerName();
     if(!oldName){return;}
-    if(!confirm(`当前名字：${oldName}\n确定要修改名字吗？修改后旧名字将从排行榜中移除。`))return;
-    // Remove old name from leaderboard
+    const newName=prompt(`当前名字：${oldName}\n请输入新名字：`);
+    if(!newName||!newName.trim())return;
+    const name=newName.trim();
+    if(name===oldName)return;
     (async()=>{
         const lb=await fetchLeaderboard();
-        const filtered=lb.filter(e=>e.name!==oldName);
-        if(filtered.length!==lb.length){await pushLeaderboard(filtered);}
-        localStorage.removeItem('racingPlayerName');
-        alert('名字已清除，下次进入排行榜前十时会提示你输入新名字。');
+        // Check if new name already taken
+        if(lb.some(e=>e.name===name)){
+            alert('该名称已被其他玩家使用，请换一个');
+            return;
+        }
+        // Replace old name with new name, keep all data
+        const updated=lb.map(e=>e.name===oldName?{...e,name}:e);
+        await pushLeaderboard(updated);
+        setPlayerName(name);
+        alert(`名字已修改为「${name}」，排行榜数据已保留！`);
+        renderLeaderboard(currentLBTab);
     })();
 }
 
