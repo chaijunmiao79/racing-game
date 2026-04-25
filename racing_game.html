@@ -180,8 +180,8 @@ const WEAPONS = {
     shotgun: { name: '霰弹枪', baseFireRate: 800,  rateDec: 100, baseDmg: 1, dmgInc: 0.4, hitsToKill: 3, bulletSpeed: 16, bulletSize: 5,  bulletColor: '#f4f', pellets: 3, spread: 25, maxLevel: 6 },
 };
 
-function getWeaponFireRate(type, level) { const w = WEAPONS[type]; return Math.max(80, w.baseFireRate - (level - 1) * w.rateDec); }
-function getWeaponDamage(type, level) { const w = WEAPONS[type]; return w.baseDmg + (level - 1) * w.dmgInc; }
+function getWeaponFireRate(type, level) { const w = WEAPONS[type]; const rate = Math.max(80, w.baseFireRate - (level - 1) * w.rateDec); return level >= 6 ? Math.max(50, rate * 0.6) : rate; }
+function getWeaponDamage(type, level) { const w = WEAPONS[type]; const dmg = w.baseDmg + (level - 1) * w.dmgInc; return level >= 6 ? dmg * 1.5 : dmg; }
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
