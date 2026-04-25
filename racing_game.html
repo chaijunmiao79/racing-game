@@ -567,7 +567,7 @@ function updateBullets(){
       if(o.exploding)continue;
       const ox=getLaneCenterX(o.lane);
       if(Math.abs(b.x-ox)<CONFIG.CAR_W*0.6&&Math.abs(b.y-o.y)<CONFIG.CAR_H*0.6){
-        if(b.isMax&&(b.bounces||0)<2){
+        if(b.isMax&&(b.bounces||0)<3){
           b.bounces=(b.bounces||0)+1;
           o.hp+=b.damage;
           const wDef=WEAPONS[b.type];
@@ -602,7 +602,7 @@ function updateBullets(){
   });
   game.bullets=game.bullets.filter(b=>!b.hit&&b.y>-50&&b.y<canvas.height+50&&b.x>-50&&b.x<canvas.width+50);
 }
-function drawBullets(){game.bullets.forEach(b=>{if(b.hit)return;ctx.strokeStyle=b.color;ctx.lineWidth=b.size*0.6;ctx.globalAlpha=0.4;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.x,b.y+20);ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.size,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(b.x,b.y,b.size*0.4,0,Math.PI*2);ctx.fill();if(b.type==='sniper'){ctx.strokeStyle='rgba(255,0,0,0.3)';ctx.lineWidth=b.size*1.5;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.x,b.y+40);ctx.stroke();}if(b.isMax){ctx.shadowColor='#ffd700';ctx.shadowBlur=12;for(let i=0;i<3;i++){const a=Math.random()*Math.PI*2;const r=b.size+3+Math.random()*5;const lx=b.x+Math.cos(a)*r;const ly=b.y+Math.sin(a)*r;ctx.strokeStyle=`rgba(255,215,0,${0.5+Math.random()*0.5})`;ctx.lineWidth=1+Math.random();ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(lx,ly);ctx.stroke();ctx.fillStyle=`rgba(255,255,${150+Math.random()*105},${0.7+Math.random()*0.3})`;ctx.beginPath();ctx.arc(lx,ly,1+Math.random()*1.5,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;}});}
+function drawBullets(){game.bullets.forEach(b=>{if(b.hit)return;const tailLen=b.bouncing?15:20;const tx=b.bouncing?b.x-b.vx*2:b.x;const ty=b.bouncing?b.y-b.vy*2:b.y+tailLen;ctx.strokeStyle=b.color;ctx.lineWidth=b.size*0.6;ctx.globalAlpha=0.4;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(tx,ty);ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.size,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(b.x,b.y,b.size*0.4,0,Math.PI*2);ctx.fill();if(b.type==='sniper'){const stx=b.bouncing?b.x-b.vx*4:b.x;const sty=b.bouncing?b.y-b.vy*4:b.y+40;ctx.strokeStyle='rgba(255,0,0,0.3)';ctx.lineWidth=b.size*1.5;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(stx,sty);ctx.stroke();}if(b.isMax){ctx.shadowColor='#ffd700';ctx.shadowBlur=12;for(let i=0;i<3;i++){const a=Math.random()*Math.PI*2;const r=b.size+3+Math.random()*5;const lx=b.x+Math.cos(a)*r;const ly=b.y+Math.sin(a)*r;ctx.strokeStyle=`rgba(255,215,0,${0.5+Math.random()*0.5})`;ctx.lineWidth=1+Math.random();ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(lx,ly);ctx.stroke();ctx.fillStyle=`rgba(255,255,${150+Math.random()*105},${0.7+Math.random()*0.3})`;ctx.beginPath();ctx.arc(lx,ly,1+Math.random()*1.5,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;}});}
 
 // ============ BOMB & SHIELD ============
 function useBomb(){if(game.bombs<=0||game.state!=='playing')return;game.bombs--;playBombSound();
